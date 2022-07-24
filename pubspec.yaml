@@ -1,0 +1,21 @@
+publish_to: 'none'
+
+name: potplayer_launcher
+description: PotPlayer launcher URI protocol handler utility.
+version: 1.0.0
+homepage: https://github.com/Zekfad/potplayer_launcher
+repository: https://github.com/Zekfad/potplayer_launcher
+issue_tracker: https://github.com/Zekfad/potplayer_launcher/issues
+
+environment:
+  sdk: '>=2.17.6 <3.0.0'
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.4
+
+dependencies:
+  ffi: ^2.0.1
+  win32: ^2.7.0
+  win32_registry:
+    git: https://github.com/Zekfad/win32_registry
