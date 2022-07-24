@@ -9,8 +9,8 @@ potplayer:?json
 Where JSON in the following format:
 ```json
 {
-	url     : 'Media file URL',
-	subtitle: 'Optional subtitles file URL'
+    "url"     : "Media file URL",
+    "subtitle": "Optional subtitles file URL"
 }
 ```
 
