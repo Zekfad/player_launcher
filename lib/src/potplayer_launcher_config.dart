@@ -1,33 +1,14 @@
 import 'package:win32_registry/win32_registry.dart';
 
-import 'protocol.dart' show protocol;
+import 'registry_protocol.dart' show protocol;
 
 class PotPlayerLauncherConfig {
   const PotPlayerLauncherConfig({
     required this.potPlayerExecutablePath,
   });
 
-  final String potPlayerExecutablePath;
-
-  static const potPlayerExecutablePathValue = 'pp_executable';
-
-  static RegistryKey _openProtocolKey() {
-    final hkcr = Registry.openPath(
-      RegistryHive.classesRoot,
-      desiredAccessRights: AccessRights.allAccess,
-    );
-    if (!hkcr.subkeyNames.contains(protocol)) {
-      throw Exception('Cannot find protocol key.');
-    }
-    try {
-      return hkcr.createKey(protocol);
-    } finally {
-      hkcr.close();
-    }
-  }
-
-  static PotPlayerLauncherConfig read() {
-    final RegistryKey protocolKey = _openProtocolKey();
+  factory PotPlayerLauncherConfig.fromRegistry() {
+    final protocolKey = _openRegistryProtocolKey();
     try {
       final potPlayerExecutablePath = protocolKey.getValue(potPlayerExecutablePathValue);
       if (potPlayerExecutablePath == null || potPlayerExecutablePath.type != RegistryValueType.string) {
@@ -42,9 +23,28 @@ class PotPlayerLauncherConfig {
     }
   }
 
+  final String potPlayerExecutablePath;
+
+  static const potPlayerExecutablePathValue = 'pp_executable';
+
+  static RegistryKey _openRegistryProtocolKey() {
+    final hkcr = Registry.openPath(
+      RegistryHive.classesRoot,
+      desiredAccessRights: AccessRights.allAccess,
+    );
+    if (!hkcr.subkeyNames.contains(protocol)) {
+      throw Exception('Cannot find protocol key.');
+    }
+    try {
+      return hkcr.createKey(protocol);
+    } finally {
+      hkcr.close();
+    }
+  }
+
   void write() {
     try {
-      _openProtocolKey()
+      _openRegistryProtocolKey()
         ..createValue(
           RegistryValue(
             potPlayerExecutablePathValue,

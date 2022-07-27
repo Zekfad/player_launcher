@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:win32/win32.dart';
 import 'package:win32_registry/win32_registry.dart';
 
 import 'recursive_delete_sub_key.dart';
@@ -10,7 +9,7 @@ const protocol = 'potplayer';
 const protocolName = 'URL:PotPlayer launcher protocol';
 const contentType = 'application/x-potplayer';
 
-bool register(String potPlayerExecutablePath) {
+bool registerProtocol(String potPlayerExecutablePath) {
   final executablePath = Platform.resolvedExecutable;
 
   final hkcr = Registry.openPath(
