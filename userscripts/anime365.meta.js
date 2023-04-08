@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Anime365 play via PotPlayer
 // @namespace    https://znnme.eu.org/
-// @version      2.0.0
+// @version      2.0.1
 // @description  Add play via PotPlayer button to Anime365 website.
 // @downloadURL  https://raw.githubusercontent.com/Zekfad/player_launcher/master/userscripts/anime365.user.js
 // @updateURL    https://raw.githubusercontent.com/Zekfad/player_launcher/master/userscripts/anime365.meta.js
