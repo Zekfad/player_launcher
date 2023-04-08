@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:win32/win32.dart';
 
-import 'potplayer_launch_arguments.dart';
+import 'pot_player_launch_arguments.dart';
 
 
 void launchPotPlayer(String executablePath, PotPlayerLaunchArguments arguments) {

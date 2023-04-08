@@ -1,16 +1,22 @@
-# PotPlayer launcher
+# Player launcher
 
-## PotPlayer launcher protocol
+Player launcher utility. Allows you to start video player from the browser.
+
+For now the only supported player is PotPlayer.
+
+## Player launcher protocol
 
 ```url
-potplayer:?json
+player-launcher:?v=version&payload=json
 ```
+
+Current version is `2`.
 
 Where JSON in the following format:
 ```json
 {
-    "url"     : "Media file URL",
-    "subtitle": "Optional subtitles file URL"
+    "video"    : "Media file URL",
+    "subtitles": "Optional subtitles file URL"
 }
 ```
 
@@ -18,14 +24,26 @@ Where JSON in the following format:
 
 Run
 ```shell
-launcher --register <pot player executable path>
+launcher --register [<PotPlayer executable path>]
 ```
 to register protocol and write launcher config.
 
+On Windows config is stored in Registry in protocol sub key "Config".
+
+You can skip executable path, launcher will try to find executable via some known registry keys.
+
 ## Anime356 userscript
 
-Userscript adds "Open via PotPlayer" buttons after download buttons.
+Userscript adds "Open via external player" buttons after download buttons.
 
 Supports subtitles.
 
-[Userscript source](userscripts/anime365.user.js) - [install userscript](https://raw.githubusercontent.com/Zekfad/potplayer_launcher/master/userscripts/anime365.user.js).
+[Userscript source](userscripts/anime365.user.js) - [install userscript](https://raw.githubusercontent.com/Zekfad/player_launcher/master/userscripts/anime365.user.js).
+
+## Mac Support
+
+Mac support is done via IINA and have some suboptimal solutions, because
+otherwise it's need to be programmed on "fancy" Apple programming language.
+
+E.g. instead of parsing actual protocol, it starts web server, waits for request
+and then shutsdown.

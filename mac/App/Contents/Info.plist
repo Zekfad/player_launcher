@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<!-- <Bundle configuration> -->
+		<!-- Categorization -->
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>LSApplicationCategoryType</key>
+		<string>public.app-category.utilities</string>
+		<!-- Identification -->
+		<key>CFBundleIdentifier</key>
+		<string>moe.null.zekfad.player-launcher</string>
+		<!-- Naming -->
+		<key>CFBundleName</key>
+		<string>Player Launcher</string>
+		<!-- Bundle version -->
+		<key>CFBundleVersion</key>
+		<string>2.0.0</string>
+		<key>CFBundleShortVersionString</key>
+		<string>2.0.0</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>NSHumanReadableCopyright</key>
+		<string>Copyright © 2023 Yaroslav Vorobev. All rights reserved.</string>
+		<!-- Operating system version -->
+		<key>LSMinimumSystemVersion</key>
+		<string>11</string>
+		<!-- Localization -->
+		<key>CFBundleDevelopmentRegion</key>
+		<string>en</string>
+		<!-- </Bundle configuration> -->
+		<!-- <App execution> -->
+		<key>CFBundleExecutable</key>
+		<string>player-launcher</string>
+		<key>CFBundleIconFile</key>
+		<string></string>
+		<key>LSMultipleInstancesProhibited</key>
+		<false />
+		<!-- </App execution> -->
+		<!-- <Data and storage> -->
+		<!-- URL schemes -->
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Viewer</string>
+				<key>CFBundleURLName</key>
+				<string>Player Launcher</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>player-launcher</string>
+				</array>
+			</dict>
+		</array>
+		<!-- </Data and storage> -->
+		<!-- <User interface> -->
+		<!-- Main user interface -->
+		<key>LSUIElement</key>
+		<false />
+		<!-- </User interface> -->
+		<key>CFBundleSignature</key>
+		<string>????</string>
+	</dict>
+</plist>
