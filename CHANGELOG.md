@@ -9,8 +9,7 @@
 - Update dependencies.
 - Better handling of Registry.
 - File configuration support (for non-windows).
-- Groundwork for different or multiple players.
-- UserScript for MacOS allows copy direct-link instead of requesting utility.
+- MacOS support via IINA.
 
 ## 1.0.1
 
