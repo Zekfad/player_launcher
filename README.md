@@ -2,7 +2,10 @@
 
 Player launcher utility. Allows you to start video player from the browser.
 
-For now the only supported player is PotPlayer.
+List of supported players:
+
+* PotPlayer (Windows)
+* IINA (MacOS)
 
 ## Player launcher protocol
 
