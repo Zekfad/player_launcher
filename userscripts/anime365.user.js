@@ -1,14 +1,15 @@
 // ==UserScript==
 // @name         Anime365 play via PotPlayer
 // @namespace    https://znnme.eu.org/
-// @version      1.0.0
+// @version      3.0.0
 // @description  Add play via PotPlayer button to Anime365 website.
-// @downloadUrl  https://raw.githubusercontent.com/Zekfad/potplayer_launcher/master/userscripts/anime365.user.js
-// @updateUrl    https://raw.githubusercontent.com/Zekfad/potplayer_launcher/master/userscripts/anime365.meta.js
+// @downloadURL  https://raw.githubusercontent.com/Zekfad/player_launcher/master/userscripts/anime365.user.js
+// @updateURL    https://raw.githubusercontent.com/Zekfad/player_launcher/master/userscripts/anime365.meta.js
 // @author       Zekfad
 // @match        https://smotret-anime.com/*
 // @match        https://smotret-anime.online/*
 // @match        https://anime365.ru/*
+// @match        https://hentai365.ru/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=anime365.ru
 // @grant        none
 // @run-at document-end
@@ -16,52 +17,66 @@
 
 (async function () {
 	'use strict';
-	class Selectors {
-		static page = '.is-anime-site';
+	const launcherProtocol = 'player-launcher:';
+	const launcherProtocolVersion = 2;
+
+	class QuerySelectors {
+		static page = '.is-anime-site,.is-hentai-site';
 		static downloadCard = '.card .m-translation-view-download';
 		static downloadVideoButton = 'a[download].btn[href*="/translations/mp4/"]';
 		static downloadSubtitlesButton = 'a[download].btn[href*="/translations/ass/"]';
 	}
 	const pageLoadingClass = 'dynpage-loading';
-	const pageElement = document.querySelector(Selectors.page);
+	const pageElement = document.querySelector(QuerySelectors.page);
 	const pageObserver = new MutationObserver(mutationHandler);
 
 	pageObserver.observe(pageElement, {
 		attributes     : true,
-		attributeFilter: ['class',],
+		attributeFilter: [ 'class', ],
 		// attributeOldValue: true,
 	});
 
 	onPageLoad(true);
 
-	function mutationHandler(mutationList, observer) {
-		for (const mutation of mutationList) {
+	/** @type {MutationCallback} */
+	function mutationHandler(mutations, observer) {
+		for (const mutation of mutations) {
 			if (pageElement === mutation.target) {
-				onPageLoad(!mutation.target.classList.contains(pageLoadingClass));
+				onPageLoad(!pageElement.classList.contains(pageLoadingClass));
 			}
 		}
 	}
 
-	function onPageLoad(loaded = true) {
-		if (loaded) {
-			const card = document.querySelector(Selectors.downloadCard);
+	function onPageLoad(loadingDone = true) {
+		if (loadingDone) {
+			const card = document.querySelector(QuerySelectors.downloadCard);
 			if (card) {
-				const videoDownloadButtons = document.querySelectorAll(Selectors.downloadVideoButton)
-				const subtitlesUrl = document.querySelector(Selectors.downloadSubtitlesButton)?.href;
+				/** @type {NodeListOf<HTMLAnchorElement>} */
+				const videoDownloadButtons = document.querySelectorAll(QuerySelectors.downloadVideoButton);
+				/** @type {HTMLAnchorElement} */
+				const subtitlesDownloadButton = document.querySelector(QuerySelectors.downloadSubtitlesButton);
+				const subtitlesUrl = subtitlesDownloadButton?.href;
 				videoDownloadButtons.forEach(
-					createPlayViaPotPlayerButton.bind(createPlayViaPotPlayerButton, subtitlesUrl)
+					createAndAttachPlayViaExternalPlayerButton.bind(
+						createAndAttachPlayViaExternalPlayerButton,
+						subtitlesUrl
+					)
 				);
 			}
 		}
 	}
 
-	async function createPlayViaPotPlayerButton(subtitlesUrl, button) {
+	/**
+	 * @param {string}            subtitlesUrl Subtitles URL.
+	 * @param {HTMLAnchorElement} button       Button to place new button after. 
+	 */
+	async function createAndAttachPlayViaExternalPlayerButton(subtitlesUrl, button) {
 		const quality = Array.from(
 			new URL(button.href).searchParams
 		).find(
-			(query) => query[0] == 'height'
+			(keyValue) => keyValue[0] == 'height'
 		)[1];
-		const downloadUrl = await getTargetUrl(button.href);
+		const videoDownloadUrl = await getTargetUrl(button.href);
 		const playButton = document.createElement('a');
 
 		playButton.classList.add(...[
@@ -73,21 +88,28 @@
 			'white-text',
 			'no-dynpage',
 		]);
-		playButton.innerText = `Play via PotPlayer (${quality}P)`;
-		playButton.href = `potplayer:?${JSON.stringify({
-			url     : downloadUrl,
-			subtitle: subtitlesUrl,
-		})}`;
+
+		const protocolUri = `${launcherProtocol}?v=${launcherProtocolVersion}&payload=${encodeURIComponent(JSON.stringify({
+			video: videoDownloadUrl,
+			subtitles: subtitlesUrl,
+		}))}`;
+
+		playButton.innerText = `Play via external player (${quality}P)`;
+		playButton.href = protocolUri;
 
 		button.after(playButton);
 	}
 
+	/**
+	 * @param {String} url
+	 * @returns {Promise<string>}
+	 */
 	async function getTargetUrl(url) {
-		const controller = new AbortController();
-		const res = await fetch(url, {
-			signal: controller.signal,
+		const abortController = new AbortController();
+		const response = await fetch(url, {
+			signal: abortController.signal,
 		});
-		controller.abort();
-		return res.url;
+		abortController.abort();
+		return response.url;
 	}
 })();

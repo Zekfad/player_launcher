@@ -2,14 +2,11 @@ import 'dart:io';
 
 import 'package:win32_registry/win32_registry.dart';
 
-import 'recursive_delete_sub_key.dart';
+const protocol = 'player-launcher';
+const protocolName = 'URL:Player launcher protocol';
+const contentType = 'application/x-player-launcher';
 
-
-const protocol = 'potplayer';
-const protocolName = 'URL:PotPlayer launcher protocol';
-const contentType = 'application/x-potplayer';
-
-bool registerProtocol(String potPlayerExecutablePath) {
+bool registerProtocol([String? defaultIcon]) {
   final executablePath = Platform.resolvedExecutable;
 
   final hkcr = Registry.openPath(
@@ -17,19 +14,20 @@ bool registerProtocol(String potPlayerExecutablePath) {
     desiredAccessRights: AccessRights.allAccess,
   );
   if (hkcr.subkeyNames.contains(protocol)) {
-    if (!recursiveDeleteSubKey(hkcr, protocol)) {
+    try {
+      hkcr.deleteKey(protocol, recursive: true);
+    } catch (e) {
       throw Exception('Cannot delete existing protocol key. Try to run with admin rights.');
     }
   }
 
   try {
-
     final protocolKey = hkcr.createKey(protocol)
       ..createValue(
         const RegistryValue(
           '',
           RegistryValueType.string,
-          'URL:PotPlayer launcher protocol',
+          protocolName,
         ),
       )
       ..createValue(
@@ -47,14 +45,7 @@ bool registerProtocol(String potPlayerExecutablePath) {
         ),
       );
 
-    final defaultIconKey = protocolKey.createKey('DefaultIcon')
-      ..createValue(
-        RegistryValue(
-          '',
-          RegistryValueType.string,
-          '"$potPlayerExecutablePath", 1',
-        ),
-      );
+    protocolKey.createKey('Config').close();
 
     final shellKey = protocolKey.createKey('shell')
       ..createValue(
@@ -76,7 +67,18 @@ bool registerProtocol(String potPlayerExecutablePath) {
         ),
       );
 
-    defaultIconKey.close();
+    if (defaultIcon != null) {
+      protocolKey.createKey('DefaultIcon')
+        ..createValue(
+          RegistryValue(
+            '',
+            RegistryValueType.string,
+            defaultIcon,
+          ),
+        )
+        ..close();
+    }
+
     commandKey.close();
     openKey.close();
     shellKey.close();
