@@ -42,8 +42,6 @@ Supports subtitles.
 
 ## Mac Support
 
-Mac support is done via IINA and have some suboptimal solutions, because
-otherwise it's need to be programmed on "fancy" Apple programming language.
+Mac support is done via IINA and launcher wrapper on Objective-C.
 
-E.g. instead of parsing actual protocol, it starts web server, waits for request
-and then shutsdown.
+You can see [`main.m`](mac/launcher/main.m) for more details about how that works.

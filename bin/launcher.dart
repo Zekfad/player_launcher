@@ -9,7 +9,8 @@ import 'package:player_launcher/players.dart' as players;
 import 'package:player_launcher/registry_protocol.dart' as registry;
 
 
-T? cast<T>(dynamic json) => json is T? ? json : null; 
+T? cast<T>(dynamic json) => json is T? ? json : null;
+
 void main(List<String> arguments) async {
   var uriMode = false;
   try {
