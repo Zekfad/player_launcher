@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:win32_registry/win32_registry.dart';
 
-const protocol = 'player-launcher';
+import '../protocol.dart';
+
 const protocolName = 'URL:Player launcher protocol';
 const contentType = 'application/x-player-launcher';
 
@@ -24,23 +25,20 @@ bool registerProtocol([String? defaultIcon]) {
   try {
     final protocolKey = hkcr.createKey(protocol)
       ..createValue(
-        const RegistryValue(
+        const RegistryValue.string(
           '',
-          RegistryValueType.string,
           protocolName,
         ),
       )
       ..createValue(
-        const RegistryValue(
+        const RegistryValue.string(
           'Content Type',
-          RegistryValueType.string,
           contentType,
         ),
       )
       ..createValue(
-        const RegistryValue(
+        const RegistryValue.string(
           'URL Protocol',
-          RegistryValueType.string,
           '',
         ),
       );
@@ -49,9 +47,8 @@ bool registerProtocol([String? defaultIcon]) {
 
     final shellKey = protocolKey.createKey('shell')
       ..createValue(
-        const RegistryValue(
+        const RegistryValue.string(
           '',
-          RegistryValueType.string,
           'open',
         ),
       );
@@ -60,9 +57,8 @@ bool registerProtocol([String? defaultIcon]) {
 
     final commandKey = openKey.createKey('command')
       ..createValue(
-        RegistryValue(
+        RegistryValue.string(
           '',
-          RegistryValueType.string,
           '"$executablePath" "%1"',
         ),
       );
@@ -70,9 +66,8 @@ bool registerProtocol([String? defaultIcon]) {
     if (defaultIcon != null) {
       protocolKey.createKey('DefaultIcon')
         ..createValue(
-          RegistryValue(
+          RegistryValue.string(
             '',
-            RegistryValueType.string,
             defaultIcon,
           ),
         )

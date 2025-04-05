@@ -1,3 +1,9 @@
+## 3.1.0
+
+- Update dependencies.
+- Canonicalize subtitles URL.
+- Display button only for highest available quality.
+
 ## 3.0.0
 
 - Rewrite Mac integration. Now using launcher that passes protocol same way windows does.

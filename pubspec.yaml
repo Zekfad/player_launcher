@@ -11,12 +11,11 @@ environment:
   sdk: '>=3.0.0-0 <4.0.0'
 
 dev_dependencies:
-  test: ^1.21.4
-  zekfad_lints: ^1.1.0
+  zekfad_lints: ^2.2.0
 
 dependencies:
   collection: ^1.17.1
   ffi: ^2.0.1
   path: ^1.8.3
-  win32: ^4.1.3
-  win32_registry: ^1.1.0
+  win32: ^5.12.0
+  win32_registry: ^2.1.0

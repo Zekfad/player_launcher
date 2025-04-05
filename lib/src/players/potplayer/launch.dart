@@ -1,6 +1,3 @@
-
-
-
 import 'dart:io';
 
 import '../../config.dart';
@@ -10,7 +7,7 @@ import 'launch_potplayer.dart';
 import 'pot_player_launch_arguments.dart';
 
 
-void launch(Config config, PlayerArguments playerArguments) {
+Future<void>? launch(Config config, PlayerArguments playerArguments) {
   if (!Platform.isWindows)
     throw UnsupportedError('PotPlayer is Windows only player.');
 
@@ -23,7 +20,7 @@ void launch(Config config, PlayerArguments playerArguments) {
 
   final currentInstance = bool.tryParse(_config?['CurrentInstance'] ?? '') ?? true;
 
-  return launchPotPlayer(
+  launchPotPlayer(
     potPlayerExecutable,
     PotPlayerLaunchArguments(
       contents: [ playerArguments.video.toString(), ],

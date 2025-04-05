@@ -1,0 +1,1 @@
+const protocol = 'player-launcher';

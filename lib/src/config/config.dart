@@ -11,9 +11,9 @@ abstract base class Config with MapMixin<String, ConfigSection> implements Map<S
 
   List<ConfigSection> get sections;
 
-  FutureOr<void> write();
+  Future<void>? write();
 
-  FutureOr<void> close();
+  Future<void>? close();
 
   int _indexOfSection(Object? key) => 
     sections.indexWhere((element) => element.name == key);

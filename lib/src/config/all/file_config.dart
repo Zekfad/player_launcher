@@ -13,6 +13,7 @@ base class FileConfig extends Config {
     final sections = <ConfigSection>[];
     final lines = file.readAsLinesSync(encoding: encoding);
 
+    // We're updating object, so cant use const immutable value
     // ignore: prefer_const_constructors
     var currentSection = ConfigSection('', {});
     final sectionRegex = RegExp(r'^\[(?<name>.+)\]$');
@@ -46,7 +47,7 @@ base class FileConfig extends Config {
   final List<ConfigSection> sections;
 
   @override
-  FutureOr<void> write() async {
+  Future<void>? write() async {
     final sink = file.openWrite();
     for (final section in sections) {
       if (section.name.isNotEmpty)
@@ -59,5 +60,5 @@ base class FileConfig extends Config {
   }
 
   @override
-  FutureOr<void> close() {}
+  Future<void>? close() {}
 }

@@ -1,13 +1,10 @@
-
-
-
 import 'dart:io';
 
 import '../../config.dart';
 import '../../player_arguments.dart';
 
 
-Future<void> launch(Config config, PlayerArguments playerArguments) {
+Future<void>? launch(Config config, PlayerArguments playerArguments) {
   if (!Platform.isMacOS)
     throw UnsupportedError('IINA is MacOS only player.');
 
@@ -19,6 +16,6 @@ Future<void> launch(Config config, PlayerArguments playerArguments) {
 
   return Process.start(iinaCliExecutable, [
     playerArguments.video.toString(),
-    '--mpv-sub-files-append=${playerArguments.subtitles}'
+    '--mpv-sub-files-append=${playerArguments.subtitles}',
   ]);
 }

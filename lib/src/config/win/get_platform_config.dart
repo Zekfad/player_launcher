@@ -1,6 +1,6 @@
 import 'package:win32_registry/win32_registry.dart';
 
-import '../../registry_protocol.dart' show protocol;
+import '../../../protocol.dart';
 import '../config.dart';
 import 'registry_config.dart';
 

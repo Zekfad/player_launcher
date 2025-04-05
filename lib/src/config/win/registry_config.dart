@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:win32_registry/win32_registry.dart';
 
 import '../config.dart';
@@ -12,15 +10,19 @@ base class RegistryConfig extends Config {
   factory RegistryConfig.readSync(RegistryKey key) {
     final sections = <ConfigSection>[];
 
+    // We're updating object, so cant use const immutable value
     // ignore: prefer_const_constructors
     var currentSection = ConfigSection('', {});
 
     void _readKeyValues(RegistryKey subKey) {
       for (final value in subKey.values) {
-        if (value.type == RegistryValueType.string)
-          currentSection.values[value.name] = value.data as String;
-        if (value.type == RegistryValueType.int32 || value.type == RegistryValueType.int64)
-          currentSection.values[value.name] = (value.data as int).toString();
+        final stringValue = switch (value) {
+          StringValue(:final value) => value,
+          Int32Value(:final value) || Int64Value(:final value) => value.toString(),
+          _ => null,
+        };
+        if (null != stringValue)
+          currentSection.values[value.name] = stringValue;
       }
     }
 
@@ -49,15 +51,14 @@ base class RegistryConfig extends Config {
   final List<ConfigSection> sections;
 
   @override
-  FutureOr<void> write() {
+  Future<void>? write() {
     var currentSubKey = key;
 
     void _writeKeyValues(ConfigSection section) {
       for (final entry in section.values.entries)
         currentSubKey.createValue(
-          RegistryValue(
+          RegistryValue.string(
             entry.key,
-            RegistryValueType.string,
             entry.value,
           ),
         );
@@ -74,5 +75,7 @@ base class RegistryConfig extends Config {
   }
 
   @override
-  void close() => key.close();
+  Future<void>? close() {
+    key.close();
+  }
 }

@@ -8,7 +8,7 @@ String? findPotPlayerExecutable() {
       path: r'potrun\shell\open\command',
       desiredAccessRights: AccessRights.readOnly,
     );
-    final potrun = potrunKey.getValueAsString('');
+    final potrun = potrunKey.getStringValue('');
     if (potrun?.endsWith(' "%1"') ?? false) {
       return potrun!.substring(0, potrun.length - 5);
     }

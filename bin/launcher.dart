@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:player_launcher/libalert.dart' as libalert;
 import 'package:player_launcher/player_launcher.dart';
 import 'package:player_launcher/players.dart' as players;
+import 'package:player_launcher/protocol.dart';
 import 'package:player_launcher/registry_protocol.dart' as registry;
 
 
@@ -14,30 +15,29 @@ T? cast<T>(dynamic json) => json is T? ? json : null;
 void main(List<String> arguments) async {
   var uriMode = false;
   try {
-    if (arguments.isNotEmpty) {
-      if (arguments.length == 1 && arguments.single.startsWith(registry.protocol)) {
-        uriMode = true;
-        await runPlayerUri(arguments.first);
-      } else if (arguments.first == '--register') {
+    switch (arguments) {
+      case [ '--register', ...List(firstOrNull: final path), ]:
         if (!Platform.isWindows)
           throw UnsupportedError('Unsupported platform.');
-
-        registry.registerProtocol();
-        stdout.writeln('Successfully registered protocol.');
-        if (arguments.length > 1) {
-          final path = normalize(arguments[1]);
-          if (!File(path).existsSync())
-            throw Exception('Invalid path, file doesn\'t exist.');
+        if (path != null) {
+          final executable = normalize(path);
+          if (!File(executable).existsSync())
+            throw Exception('Invalid path, file doesn\'t exist: $executable');
 
           final config = getPlatformConfig();
           final potPlayerConfig = config.getOrCreateSection('potplayer');
-          potPlayerConfig.values['location'] = path;
+          potPlayerConfig.values['location'] = executable;
           await config.write();
-          stdout.writeln('Successfully saved PotPlayer location ($path).');
+          stdout.writeln('Successfully updated PotPlayer location ($executable).');
         } else {
-          stderr.writeln('Warning: no PotPlayer path provided. Launcher will try to find it automatically.');
+          stderr.writeln('Warning: no PotPlayer path provided. Launcher will try to find it automatically on each run.');
         }
-      } else {
+        registry.registerProtocol();
+        stdout.writeln('Successfully registered protocol.');
+      case [ final uriString, ] when protocol == Uri.tryParse(uriString)?.scheme:
+        uriMode = true;
+        await runPlayerUri(Uri.parse(uriString));
+      default:
         await (stdout
           ..writeln('launcher (launch-uri|--help|--register [<executable>])\n')
           ..writeln(' launch-uri                - launch player with required parameters from URI')
@@ -45,7 +45,6 @@ void main(List<String> arguments) async {
           ..writeln('                             you can omit executable to try automatically find it')
           ..writeln(' --help                    - show this help page')
         ).flush();
-      }
     }
   } catch (e) {
     if (Platform.isMacOS) {
@@ -65,14 +64,8 @@ void main(List<String> arguments) async {
   }
 }
 
-FutureOr<void> runPlayerUri(String uriString) async {
+Future<void>? runPlayerUri(Uri uri) {
   final config = getPlatformConfig();
-
-  final uri = Uri.tryParse(uriString);
-  if (uri == null)
-    throw ArgumentError.value(uriString, 'Invalid URI.');
-  if (uri.scheme != registry.protocol)
-    throw ArgumentError.value(uri.scheme, 'Invalid protocol.');
   
   final version = int.tryParse(uri.queryParameters['v'] ?? '1');
   final payload = uri.queryParameters['payload'];
